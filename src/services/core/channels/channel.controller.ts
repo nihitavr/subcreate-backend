@@ -2,9 +2,7 @@ import {
   Controller,
   Get,
   Body,
-  Patch,
   Param,
-  Delete,
   Post,
   UseGuards,
   Query,
@@ -12,12 +10,16 @@ import {
 } from '@nestjs/common';
 import { FastifyRequest } from 'fastify';
 import { JwtAuthGuard } from 'src/services/auth/guards/jwt.guard';
+import { UserChannelAuthorizationGuard } from 'src/services/auth/guards/user-channel-authorization.guard';
 import { ChannelService } from './channel.service';
+import { ChannelGeneralSettingsDto } from './dto/channel-general-settings.dto';
+import { ChannelNavbarDto } from './dto/channel-navbar-settings.dto';
 import { CreateChannelDto } from './dto/create-channel.dto';
-import { UpdateChannelDashboardDto } from './dto/update-channel.dto';
+import { FindChannelsDto } from './dto/find-channels.dto';
+import { ChannelAppearance } from './entities/classes/channel-appearance.class';
 
+@Controller('channels')
 @UseGuards(JwtAuthGuard)
-@Controller('channel')
 export class DashboardViewController {
   constructor(private readonly channelService: ChannelService) {}
 
@@ -26,25 +28,89 @@ export class DashboardViewController {
     @Body() createChannelDto: CreateChannelDto,
     @Req() request: FastifyRequest,
   ) {
-    return this.channelService.create(createChannelDto, (request as any).user);
+    return this.channelService.createChannel(
+      createChannelDto,
+      (request as any).user,
+    );
+  }
+
+  @Get()
+  findChannels(
+    @Query() findChannelsDto: FindChannelsDto,
+    @Req() request: FastifyRequest,
+  ) {
+    return this.channelService.findChannels(
+      findChannelsDto,
+      (request as any).user,
+    );
   }
 
   @Get(':channelId')
-  findOneChannel(@Param('id') id: string) {
-    return this.channelService.findOne(+id);
+  @UseGuards(UserChannelAuthorizationGuard)
+  findOneChannel(@Param('channelId') channelId: string) {
+    return this.channelService.findOneByChannelId(channelId);
   }
 
-  @Patch(':channelId')
-  updateChannel(
-    @Param('id') id: string,
-    @Body() updateChannelDashboardDto: UpdateChannelDashboardDto,
+  @Get(':channelId/general-settings')
+  @UseGuards(UserChannelAuthorizationGuard)
+  async findChannelGeneralSettings(@Param('channelId') channelId: string) {
+    return await this.channelService.findChannelGeneralSettingsByChannelId(
+      channelId,
+    );
+  }
+
+  @Post(':channelId/general-settings')
+  @UseGuards(UserChannelAuthorizationGuard)
+  async updateChannelGeneralSettings(
+    @Param('channelId') id: string,
+    @Body() channelGeneralSettingsDto: ChannelGeneralSettingsDto,
   ) {
-    return this.channelService.update(+id, updateChannelDashboardDto);
+    return await this.channelService.updateChannelGeneralSettings(
+      id,
+      channelGeneralSettingsDto,
+    );
   }
 
-  @Delete(':channelId')
-  remove(@Param('id') id: string) {
-    return this.channelService.remove(+id);
+  @Get(':channelId/appearance-settings')
+  @UseGuards(UserChannelAuthorizationGuard)
+  findChannelAppearanceSettings(@Param('channelId') id: string) {
+    return this.channelService.findChannelAppearanceSettings(id);
+  }
+
+  @Post(':channelId/appearance-settings')
+  @UseGuards(UserChannelAuthorizationGuard)
+  async updateChannelAppearanceSettings(
+    @Param('channelId') id: string,
+    @Body() channelAppearanceDto: ChannelAppearance,
+  ) {
+    return await this.channelService.updateChannelAppearanceSettings(
+      id,
+      channelAppearanceDto,
+    );
+  }
+
+  @Get(':channelId/navbar-settings')
+  @UseGuards(UserChannelAuthorizationGuard)
+  findChannelNavbarSettings(@Param('channelId') id: string) {
+    return this.channelService.findChannelNavbarSettings(id);
+  }
+
+  @Post(':channelId/navbar-settings')
+  @UseGuards(UserChannelAuthorizationGuard)
+  updateChannelNavbarSettings(
+    @Param('channelId') channelId: string,
+    @Body() channelNavbarDto: ChannelNavbarDto,
+  ) {
+    return this.channelService.updateChannelNavbarSettings(
+      channelId,
+      channelNavbarDto,
+    );
+  }
+
+  @Get(':channelId/seo-settings')
+  @UseGuards(UserChannelAuthorizationGuard)
+  findChannelSeoSettings(@Param('channelId') id: string) {
+    return this.channelService.findChannelSeoSettings(id);
   }
 
   @Get('does-slug-exist')

@@ -1,10 +1,11 @@
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { ObjectId } from 'mongoose';
 import { SchemaToJson } from 'src/lib/utils/mongo.utils';
 
+@Schema({ timestamps: true })
 export class Video {
-  @Prop({ type: mongoose.Types.ObjectId, ref: 'Channel' })
-  channelId: string;
+  @Prop({ type: mongoose.Types.ObjectId, ref: 'Channel', required: true })
+  channelId: ObjectId | string;
 
   @Prop({ required: true })
   title: string;

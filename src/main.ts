@@ -25,7 +25,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
 
-  app.setGlobalPrefix(`api/v1/${SERVICE_ID}`);
+  app.setGlobalPrefix(`api/${SERVICE_ID}/v1`);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -35,7 +35,7 @@ async function bootstrap() {
   );
 
   // app.useGlobalFilters(new HttpExceptionFilter());
-  app.useGlobalFilters(new MongoExceptionFilter());
+  // app.useGlobalFilters(new MongoExceptionFilter());
   app.useGlobalInterceptors(new ResponseTransformInterceptor());
 
   const config = new DocumentBuilder()

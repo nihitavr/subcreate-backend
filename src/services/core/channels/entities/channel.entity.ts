@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { SchemaToJson } from 'src/lib/utils/mongo.utils';
 import { ChannelAppearance } from './classes/channel-appearance.class';
-import { ChannelSocial } from './classes/social.class';
+import { ChannelSocial } from './classes/channel-social.class';
 import { NavbarItem } from './classes/navbar-item.class';
 import { ChannelSEO } from './classes/channel-seo.class';
 import mongoose, { HydratedDocument, ObjectId } from 'mongoose';
@@ -32,7 +32,7 @@ export class Channel extends BaseEntity {
   appearance: ChannelAppearance;
 
   @Prop({ required: true })
-  navbar: NavbarItem[];
+  navbar?: NavbarItem[];
 
   @Prop({ required: true })
   seo: ChannelSEO;

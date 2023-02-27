@@ -4,8 +4,6 @@ import { Injectable } from '@nestjs/common';
 import { AuthConfig } from 'src/config/auth.config';
 import { UsersService } from 'src/services/users/users.service';
 
-console.log(AuthConfig.firebaseJwtTokenSecret);
-
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly userService: UsersService) {

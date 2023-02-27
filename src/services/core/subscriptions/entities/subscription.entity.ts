@@ -1,11 +1,13 @@
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { ObjectId } from 'mongoose';
 import { SchemaToJson } from 'src/lib/utils/mongo.utils';
 import { Currencies } from '../enums/currencies.enum';
 import { SubscriptionGranularities } from '../enums/subscription-granularities.enum';
 
+@Schema({ timestamps: true })
 export class Subscription {
-  @Prop({ required: true })
-  channelId: string;
+  @Prop({ type: mongoose.Types.ObjectId, ref: 'Channel', required: true })
+  channelId: ObjectId | string;
 
   @Prop({ required: true })
   imageURL: string;

@@ -22,7 +22,7 @@ export class EntityNotFoundException extends HttpException {
   }
 }
 
-export class ResourceUnauthorisedException extends HttpException {
+export class UnauthorisedException extends HttpException {
   constructor(message = 'unauthorised') {
     super(
       {

@@ -1,17 +1,22 @@
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { HydratedDocument, ObjectId } from 'mongoose';
 import { SchemaToJson } from 'src/lib/utils/mongo.utils';
+import { PageSections } from '../classes/page-sections.class';
 import { PageSeo } from '../classes/page-seo.class';
 import { PageType } from '../enums/page-type.enum';
+import * as mongooseDelete from 'mongoose-delete';
 
+export type PageDoc = HydratedDocument<Page>;
+
+@Schema({ timestamps: true })
 export class Page {
-  @Prop({ type: mongoose.Types.ObjectId, ref: 'Channel' })
-  channelId: string;
+  @Prop({ type: mongoose.Types.ObjectId, ref: 'Channel', required: true })
+  channelId?: ObjectId | string;
 
   @Prop({ required: true })
   title: string;
 
-  @Prop({ required: true })
+  @Prop()
   description: string;
 
   @Prop({ required: true })
@@ -22,9 +27,12 @@ export class Page {
 
   @Prop()
   seo: PageSeo;
+
+  @Prop({ required: true })
+  sections: PageSections;
 }
 
 export const PageSchema = SchemaFactory.createForClass(Page);
-PageSchema.index({ channelId: 1 });
-PageSchema.index({ slug: 1 }, { unique: true });
+PageSchema.plugin(mongooseDelete, { overrideMethods: 'all', deletedAt: true });
+PageSchema.index({ channelId: 1, slug: 1 }, { unique: true });
 PageSchema.set('toJSON', SchemaToJson);

@@ -30,7 +30,7 @@ export class ResponseTransformInterceptor<T>
         data.statusCode = response.statusCode;
 
         if (data.statusCode == 202 || data.statusCode == 204) {
-          data.message = 'success';
+          data.message = ['success'];
         }
 
         return data;

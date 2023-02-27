@@ -1,26 +1,68 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { SoftDeleteModel } from 'mongoose-delete';
+import { toJSON } from 'src/lib/utils/mongo.utils';
+import { DoesSlugExistResponse } from '../channels/dto/does-slug-exist.response';
 import { CreatePageDto } from './dto/create-page.dto';
+import { FindAllPagesDto } from './dto/find-all-pages.dto';
 import { UpdatePageDto } from './dto/update-page.dto';
+import { Page, PageDoc } from './entities/page.entity';
 
 @Injectable()
 export class PageService {
-  create(createPageDto: CreatePageDto) {
-    return 'This action adds a new page';
+  constructor(
+    @InjectModel(Page.name)
+    private pageModel: Model<PageDoc> & SoftDeleteModel<PageDoc>,
+  ) {}
+
+  async create(channelId: string, createPageDto: CreatePageDto) {
+    const createdPage = new this.pageModel<Page>(createPageDto);
+    createdPage.channelId = channelId;
+
+    return await createdPage.save();
   }
 
-  findAll() {
-    return `This action returns all page`;
+  async findAll(channelId: string, findAllPages: FindAllPagesDto) {
+    return (
+      await this.pageModel
+        .find({
+          channelId,
+          type: { $in: findAllPages.pageTypes },
+        })
+        .sort({ createdAt: 1 })
+    ).map(toJSON);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} page`;
+  async findOne(channelId: string, pageId: string) {
+    const page = (
+      await this.pageModel.findOne({
+        _id: pageId,
+        channelId,
+      })
+    )?.toJSON();
+
+    return page;
   }
 
-  update(id: number, updatePageDto: UpdatePageDto) {
-    return `This action updates a #${id} page`;
+  update(pageId: string, updatePageDto: UpdatePageDto) {
+    return this.pageModel.findOneAndUpdate({ _id: pageId }, updatePageDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} page`;
+  async remove(pageId: string) {
+    await this.pageModel.deleteById(pageId);
+  }
+
+  async doesSlugExist(
+    channelId: string,
+    slug: string,
+  ): Promise<DoesSlugExistResponse> {
+    const page = await this.pageModel.exists({ channelId, slug });
+
+    if (page) {
+      return { doesSlugExist: true, id: page._id?.toString() };
+    }
+
+    return { doesSlugExist: false };
   }
 }
