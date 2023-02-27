@@ -7,42 +7,56 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { SubscriptionsService } from './subscriptions.service';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 import { JwtAuthGuard } from 'src/services/auth/guards/jwt.guard';
+import { UserChannelAuthorizationGuard } from 'src/services/auth/guards/user-channel-authorization.guard';
 
+@UseGuards(UserChannelAuthorizationGuard)
 @UseGuards(JwtAuthGuard)
-@Controller('subscriptions')
+@Controller('channels/:channelId/subscriptions')
 export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
 
   @Post()
-  create(@Body() createSubscriptionDto: CreateSubscriptionDto) {
-    return this.subscriptionsService.create(createSubscriptionDto);
+  create(
+    @Param('channelId') channelId: string,
+    @Body() createSubscriptionDto: CreateSubscriptionDto,
+  ) {
+    return this.subscriptionsService.createSubscription(
+      channelId,
+      createSubscriptionDto,
+    );
   }
 
   @Get()
-  findAll() {
-    return this.subscriptionsService.findAll();
+  findAll(@Param('channelId') channelId: string) {
+    return this.subscriptionsService.findAll(channelId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.subscriptionsService.findOne(+id);
+  @Get(':subscriptionId')
+  findOne(@Param('subscriptionId') subscriptionId: string) {
+    return this.subscriptionsService.findOne(subscriptionId);
   }
 
-  @Patch(':id')
+  @Patch(':subscriptionId')
   update(
-    @Param('id') id: string,
+    @Param('subscriptionId') subscriptionId: string,
     @Body() updateSubscriptionDto: UpdateSubscriptionDto,
   ) {
-    return this.subscriptionsService.update(+id, updateSubscriptionDto);
+    return this.subscriptionsService.update(
+      subscriptionId,
+      updateSubscriptionDto,
+    );
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.subscriptionsService.remove(+id);
+  @Delete(':subscriptionId')
+  @HttpCode(HttpStatus.ACCEPTED)
+  async remove(@Param('subscriptionId') subscriptionId: string) {
+    await this.subscriptionsService.remove(subscriptionId);
   }
 }

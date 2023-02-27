@@ -1,9 +1,9 @@
 import { CHANNEL_SETTINGS } from 'src/lib/constants';
-import { ChannelAppearance } from './entities/classes/channel-appearance.class';
-import { ChannelSEO } from './entities/classes/channel-seo.class';
-import { NavbarItem } from './entities/classes/navbar-item.class';
+import { ChannelAppearance } from './entities/classes/channel-appearance.dto';
+import { ChannelSEO } from './entities/classes/channel-seo.dto';
+import { NavbarItem } from './entities/classes/navbar-item.dto';
 import { NavbarItemType } from './enums/navbar-item-type.enum';
-import { ChannelSocial } from './entities/classes/channel-social.class';
+import { ChannelSocial } from './entities/classes/channel-social.dto';
 
 export class ChannelFactory {
   static createDefaultChannelSocial(): ChannelSocial {

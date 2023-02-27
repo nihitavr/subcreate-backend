@@ -4,7 +4,9 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "plugins": [
-      "@nestjs/swagger"
+      {
+        "name": "@nestjs/swagger"
+      }
     ]
   }
 }

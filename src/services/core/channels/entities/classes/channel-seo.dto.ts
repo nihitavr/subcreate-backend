@@ -1,5 +1,11 @@
 import { Prop } from '@nestjs/mongoose';
-import { IsString, IsNotEmpty, IsUrl, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsUrl,
+  IsOptional,
+  ValidateIf,
+} from 'class-validator';
 
 export class ChannelSEO {
   @Prop()
@@ -17,6 +23,6 @@ export class ChannelSEO {
 
   @Prop()
   @IsUrl()
-  @IsOptional()
+  @ValidateIf((o) => o.socialMediaSharingImageURL)
   socialMediaSharingImageURL: string;
 }

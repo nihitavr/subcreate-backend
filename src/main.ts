@@ -13,7 +13,6 @@ import { MongoExceptionFilter } from './lib/exceptions/filters/mongo-exception.f
 import { ResponseTransformInterceptor } from './lib/interceptor/response.interceptor';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpsConfig } from './config/https.config';
-import { AuthGuard } from '@nestjs/passport';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(

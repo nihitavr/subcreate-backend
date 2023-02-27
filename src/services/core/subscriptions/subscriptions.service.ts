@@ -1,26 +1,56 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { SoftDeleteModel } from 'mongoose-delete';
+import { toJSON } from 'src/lib/utils/mongo.utils';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import { Subscription, SubscriptionDoc } from './entities/subscription.entity';
 
 @Injectable()
 export class SubscriptionsService {
-  create(createSubscriptionDto: CreateSubscriptionDto) {
-    return 'This action adds a new subscription';
+  constructor(
+    @InjectModel(Subscription.name)
+    private subscriptionModel: Model<SubscriptionDoc> &
+      SoftDeleteModel<SubscriptionDoc>,
+  ) {}
+
+  async createSubscription(
+    channelId: string,
+    createSubscriptionDto: CreateSubscriptionDto,
+  ) {
+    createSubscriptionDto.channelId = channelId;
+
+    const createdSubscription = new this.subscriptionModel<Subscription>(
+      createSubscriptionDto,
+    );
+
+    await createdSubscription.save();
+
+    return createdSubscription.toJSON();
   }
 
-  findAll() {
-    return `This action returns all subscriptions`;
+  async findAll(channelId: string) {
+    return (await this.subscriptionModel.find({ channelId })).map(toJSON);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} subscription`;
+  async findOne(subscriptionId: string) {
+    return (
+      await this.subscriptionModel.findOne({ _id: subscriptionId })
+    ).toJSON();
   }
 
-  update(id: number, updateSubscriptionDto: UpdateSubscriptionDto) {
-    return `This action updates a #${id} subscription`;
+  async update(
+    subscriptionId: string,
+    updateSubscriptionDto: UpdateSubscriptionDto,
+  ) {
+    return await this.subscriptionModel.findOneAndUpdate(
+      { _id: subscriptionId },
+      updateSubscriptionDto,
+    );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} subscription`;
+  async remove(subscriptionId: string) {
+    await this.subscriptionModel.deleteById(subscriptionId);
   }
 }

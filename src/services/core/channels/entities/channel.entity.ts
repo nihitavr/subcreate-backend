@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { SchemaToJson } from 'src/lib/utils/mongo.utils';
-import { ChannelAppearance } from './classes/channel-appearance.class';
-import { ChannelSocial } from './classes/channel-social.class';
-import { NavbarItem } from './classes/navbar-item.class';
-import { ChannelSEO } from './classes/channel-seo.class';
+import { ChannelAppearance } from './classes/channel-appearance.dto';
+import { ChannelSocial } from './classes/channel-social.dto';
+import { NavbarItem } from './classes/navbar-item.dto';
+import { ChannelSEO } from './classes/channel-seo.dto';
 import mongoose, { HydratedDocument, ObjectId } from 'mongoose';
 import { User } from 'src/services/users/entities/user.entity';
 import { BaseEntity } from 'src/lib/entities/base-entity';

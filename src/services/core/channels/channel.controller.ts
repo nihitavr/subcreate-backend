@@ -13,10 +13,10 @@ import { JwtAuthGuard } from 'src/services/auth/guards/jwt.guard';
 import { UserChannelAuthorizationGuard } from 'src/services/auth/guards/user-channel-authorization.guard';
 import { ChannelService } from './channel.service';
 import { ChannelGeneralSettingsDto } from './dto/channel-general-settings.dto';
-import { ChannelNavbarDto } from './dto/channel-navbar-settings.dto';
+import { ChannelNavbarDto } from './dto/channel-navbar.dto';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { FindChannelsDto } from './dto/find-channels.dto';
-import { ChannelAppearance } from './entities/classes/channel-appearance.class';
+import { ChannelAppearance } from './entities/classes/channel-appearance.dto';
 
 @Controller('channels')
 @UseGuards(JwtAuthGuard)

@@ -11,7 +11,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { REGEX } from 'src/lib/utils/regex.utils';
-import { ChannelSocial } from '../entities/classes/channel-social.class';
+import { ChannelSocial } from '../entities/classes/channel-social.dto';
 
 export class CreateChannelDto {
   userId: string;

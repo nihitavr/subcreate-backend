@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument, ObjectId } from 'mongoose';
 import { SchemaToJson } from 'src/lib/utils/mongo.utils';
-import { PageSections } from '../classes/page-sections.class';
-import { PageSeo } from '../classes/page-seo.class';
+import { PageSections } from '../dto/page-sections.dto';
+import { PageSeo } from '../dto/page-seo.dto';
 import { PageType } from '../enums/page-type.enum';
 import * as mongooseDelete from 'mongoose-delete';
 

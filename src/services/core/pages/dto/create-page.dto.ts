@@ -9,8 +9,8 @@ import {
 } from 'class-validator';
 import { ObjectId } from 'mongoose';
 import { REGEX } from 'src/lib/utils/regex.utils';
-import { PageSections } from '../classes/page-sections.class';
-import { PageSeo } from '../classes/page-seo.class';
+import { PageSections } from './page-sections.dto';
+import { PageSeo } from './page-seo.dto';
 import { PageType } from '../enums/page-type.enum';
 
 export class CreatePageDto {

@@ -1,8 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { ObjectId } from 'mongoose';
+import mongoose, { HydratedDocument, ObjectId } from 'mongoose';
+import * as mongooseDelete from 'mongoose-delete';
 import { SchemaToJson } from 'src/lib/utils/mongo.utils';
 import { Currencies } from '../enums/currencies.enum';
 import { SubscriptionGranularities } from '../enums/subscription-granularities.enum';
+
+export type SubscriptionDoc = HydratedDocument<Subscription>;
 
 @Schema({ timestamps: true })
 export class Subscription {
@@ -15,6 +18,7 @@ export class Subscription {
   @Prop({ required: true })
   title: string;
 
+  @Prop()
   benefits: string[];
 
   @Prop({ required: true })
@@ -28,5 +32,9 @@ export class Subscription {
 }
 
 export const SubscriptionSchema = SchemaFactory.createForClass(Subscription);
+SubscriptionSchema.plugin(mongooseDelete, {
+  overrideMethods: 'all',
+  deletedAt: true,
+});
 SubscriptionSchema.index({ channelId: 1 });
 SubscriptionSchema.set('toJSON', SchemaToJson);

@@ -11,12 +11,12 @@ import { Page, PageDoc } from '../pages/entities/page.entity';
 import { PageFactory } from '../pages/pages.factory';
 import { ChannelGeneralSettingsDto } from './dto/channel-general-settings.dto';
 import { FindChannelsDto } from './dto/find-channels.dto';
-import { ChannelNavbarDto } from './dto/channel-navbar-settings.dto';
+import { ChannelNavbarDto } from './dto/channel-navbar.dto';
 import { channel } from 'diagnostics_channel';
 import { PageService } from '../pages/pages.service';
 import { PageType } from '../pages/enums/page-type.enum';
 import { NotAcceptableException } from 'src/lib/exceptions/exceptions/custom.exceptions';
-import { ChannelAppearance } from './entities/classes/channel-appearance.class';
+import { ChannelAppearance } from './entities/classes/channel-appearance.dto';
 
 @Injectable()
 export class ChannelService {

@@ -5,7 +5,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { ChannelSocial } from '../entities/classes/channel-social.class';
+import { ChannelSocial } from '../entities/classes/channel-social.dto';
 
 export class ChannelGeneralSettingsDto {
   @IsNotEmpty()
