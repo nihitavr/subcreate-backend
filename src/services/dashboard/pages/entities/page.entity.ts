@@ -5,11 +5,12 @@ import { PageSections } from '../dto/page-sections.dto';
 import { PageSeo } from '../dto/page-seo.dto';
 import { PageType } from '../enums/page-type.enum';
 import * as mongooseDelete from 'mongoose-delete';
+import { BaseEntity } from 'src/lib/entities/base-entity';
 
 export type PageDoc = HydratedDocument<Page>;
 
 @Schema({ timestamps: true })
-export class Page {
+export class Page extends BaseEntity {
   @Prop({ type: mongoose.Types.ObjectId, ref: 'Channel', required: true })
   channelId?: ObjectId | string;
 

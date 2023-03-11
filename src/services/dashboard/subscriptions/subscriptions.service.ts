@@ -8,7 +8,7 @@ import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 import { Subscription, SubscriptionDoc } from './entities/subscription.entity';
 
 @Injectable()
-export class SubscriptionsService {
+export class SubscriptionService {
   constructor(
     @InjectModel(Subscription.name)
     private subscriptionModel: Model<SubscriptionDoc> &
@@ -30,7 +30,7 @@ export class SubscriptionsService {
     return createdSubscription.toJSON();
   }
 
-  async findAll(channelId: string) {
+  async findAll(channelId: string): Promise<Subscription[]> {
     return (await this.subscriptionModel.find({ channelId })).map(toJSON);
   }
 
@@ -47,6 +47,7 @@ export class SubscriptionsService {
     return await this.subscriptionModel.findOneAndUpdate(
       { _id: subscriptionId },
       updateSubscriptionDto,
+      { new: true },
     );
   }
 

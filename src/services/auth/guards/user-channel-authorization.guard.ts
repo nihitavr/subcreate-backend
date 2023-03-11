@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Channel } from 'diagnostics_channel';
 import { Model } from 'mongoose';
 import { UnauthorisedException } from 'src/lib/exceptions/exceptions/custom.exceptions';
-import { ChannelDoc } from 'src/services/core/channels/entities/channel.entity';
+import { ChannelDoc } from 'src/services/dashboard/channels/entities/channel.entity';
 
 @Injectable()
 export class UserChannelAuthorizationGuard implements CanActivate {

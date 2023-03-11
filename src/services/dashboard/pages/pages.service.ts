@@ -23,7 +23,10 @@ export class PageService {
     return await createdPage.save();
   }
 
-  async findAll(channelId: string, findAllPages: FindAllPagesDto) {
+  async findAll(
+    channelId: string,
+    findAllPages: FindAllPagesDto,
+  ): Promise<Page[]> {
     return (
       await this.pageModel
         .find({
@@ -46,7 +49,9 @@ export class PageService {
   }
 
   update(pageId: string, updatePageDto: UpdatePageDto) {
-    return this.pageModel.findOneAndUpdate({ _id: pageId }, updatePageDto);
+    return this.pageModel.findOneAndUpdate({ _id: pageId }, updatePageDto, {
+      new: true,
+    });
   }
 
   async remove(pageId: string) {
@@ -64,5 +69,13 @@ export class PageService {
     }
 
     return { doesSlugExist: false };
+  }
+
+  async existsAll(channelId: string, pageIds: string[]) {
+    return (
+      await this.pageModel
+        .find({ channelId, _id: { $in: pageIds } })
+        .select('_id')
+    ).map(toJSON);
   }
 }

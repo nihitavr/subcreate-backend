@@ -1,6 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { ObjectId } from 'mongoose';
+import mongoose, { HydratedDocument, ObjectId } from 'mongoose';
 import { SchemaToJson } from 'src/lib/utils/mongo.utils';
+import * as mongooseDelete from 'mongoose-delete';
+
+export type VideoDoc = HydratedDocument<Video>;
 
 @Schema({ timestamps: true })
 export class Video {
@@ -10,37 +13,44 @@ export class Video {
   @Prop({ required: true })
   title: string;
 
-  @Prop()
+  @Prop({ default: '' })
   description: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, default: 0 })
   durationInSecs: number;
 
-  @Prop()
+  @Prop({ default: [] })
   tags: string[];
 
-  @Prop()
-  thumbnail: string;
+  @Prop({ default: '' })
+  thumbnailURL: string;
 
-  @Prop()
+  @Prop({ default: '' })
   originalURL: string;
 
-  @Prop()
+  @Prop({ default: false })
   isYoutubeURL: boolean;
 
-  @Prop()
+  @Prop({ default: [] })
   subscriptionIds: ObjectId[] | string[];
 
-  @Prop()
+  @Prop({ default: [] })
+  pageIds: ObjectId[] | string[];
+
+  @Prop({ default: null })
   publishedAt: Date;
 
   @Prop({ default: false })
-  published: boolean;
+  isPublished: boolean;
 
   @Prop({ default: false })
-  uploaded: boolean;
+  isFileUploaded: boolean;
 }
 
 export const VideoSchema = SchemaFactory.createForClass(Video);
+VideoSchema.plugin(mongooseDelete, {
+  overrideMethods: 'all',
+  deletedAt: true,
+});
 VideoSchema.index({ channelId: 1 });
 VideoSchema.set('toJSON', SchemaToJson);

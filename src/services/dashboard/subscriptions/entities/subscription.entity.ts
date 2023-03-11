@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument, ObjectId } from 'mongoose';
 import * as mongooseDelete from 'mongoose-delete';
+import { BaseEntity } from 'src/lib/entities/base-entity';
 import { SchemaToJson } from 'src/lib/utils/mongo.utils';
 import { Currencies } from '../enums/currencies.enum';
 import { SubscriptionGranularities } from '../enums/subscription-granularities.enum';
@@ -8,7 +9,7 @@ import { SubscriptionGranularities } from '../enums/subscription-granularities.e
 export type SubscriptionDoc = HydratedDocument<Subscription>;
 
 @Schema({ timestamps: true })
-export class Subscription {
+export class Subscription extends BaseEntity {
   @Prop({ type: mongoose.Types.ObjectId, ref: 'Channel', required: true })
   channelId: ObjectId | string;
 

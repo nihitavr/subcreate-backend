@@ -37,6 +37,7 @@
     "class-validator": "^0.14.0",
     "dotenv": "^16.0.3",
     "fastify": "^4.13.0",
+    "firebase-admin": "^11.5.0",
     "mongodb": "^5.0.1",
     "mongoose": "^6.9.1",
     "mongoose-delete": "^0.5.4",

@@ -12,7 +12,6 @@ import { PageFactory } from '../pages/pages.factory';
 import { ChannelGeneralSettingsDto } from './dto/channel-general-settings.dto';
 import { FindChannelsDto } from './dto/find-channels.dto';
 import { ChannelNavbarDto } from './dto/channel-navbar.dto';
-import { channel } from 'diagnostics_channel';
 import { PageService } from '../pages/pages.service';
 import { PageType } from '../pages/enums/page-type.enum';
 import { NotAcceptableException } from 'src/lib/exceptions/exceptions/custom.exceptions';
@@ -100,6 +99,7 @@ export class ChannelService {
     return await this.channelModel.findOneAndUpdate(
       { _id: channelId },
       channelGeneralSettingsDto,
+      { new: true },
     );
   }
 
@@ -138,6 +138,7 @@ export class ChannelService {
     return await this.channelModel.findOneAndUpdate(
       { _id: channelId },
       channelNavbarDto,
+      { new: true },
     );
   }
 
@@ -156,6 +157,7 @@ export class ChannelService {
     return await this.channelModel.findOneAndUpdate(
       { _id: channelId },
       { appearance: channelAppearanceDto },
+      { new: true },
     );
   }
 
