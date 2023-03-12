@@ -84,7 +84,6 @@ export class VideosService {
       })
     ).toJSON();
 
-    console.log(video);
     return video;
   }
 
@@ -136,7 +135,7 @@ export class VideosService {
 
         await this.videoModel.updateOne(
           { _id: videoPage.videoId },
-          { pageIds: pageIds },
+          { pageIds: Array.from(new Set(pageIds)) },
         );
       }),
     );
