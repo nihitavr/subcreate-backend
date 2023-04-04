@@ -16,32 +16,35 @@ import { PageService } from '../pages/pages.service';
 import { PageType } from '../pages/enums/page-type.enum';
 import { NotAcceptableException } from 'src/lib/exceptions/exceptions/custom.exceptions';
 import { ChannelAppearance } from './entities/classes/channel-appearance.dto';
+import { YoutubeService } from 'src/services/youtube/youtube.service';
+import { VideoFactory } from '../videos/video.factory';
+import { Video, VideoDoc } from '../videos/entities/video.entity';
 
 @Injectable()
 export class ChannelService {
   constructor(
-    @InjectModel(Channel.name)
-    private channelModel: Model<ChannelDoc>,
-
-    @InjectModel(Page.name)
-    private pageModel: Model<PageDoc>,
-
-    private pageService: PageService,
-
+    @InjectModel(Channel.name) private channelModel: Model<ChannelDoc>,
+    @InjectModel(Page.name) private pageModel: Model<PageDoc>,
+    @InjectModel(Video.name) private videoModel: Model<VideoDoc>,
     @InjectConnection() private connection: Connection,
+    private pageService: PageService,
+    private youtubeService: YoutubeService,
   ) {}
 
   async createChannel(createChannelDto: CreateChannelDto, user: User) {
     const session = await this.connection.startSession();
-
     session.startTransaction();
+
     try {
+      // Set the user ID for the channel
       createChannelDto.userId = user.id;
 
+      // Create default settings for social, appearance, and SEO
       const social = ChannelFactory.createDefaultChannelSocial();
       const appearance = ChannelFactory.createDefaultChannelAppearance();
       const seo = ChannelFactory.createDefaultChannelSEO();
 
+      // Create a new channel model instance with the given settings
       const createdChannel = new this.channelModel<Channel>({
         ...createChannelDto,
         social,
@@ -49,11 +52,24 @@ export class ChannelService {
         seo,
       });
 
-      const pages = PageFactory.createDefaultPages(createdChannel.id);
+      // Fetch the channel's videos from YouTube
+      const youtubeVideos = await this.youtubeService.fetchChannelVideos(
+        createChannelDto.youtubeChannelId,
+      );
 
-      const createdHomePage = new this.pageModel<Page>(pages[0]);
-      const createdAboutPage = new this.pageModel<Page>(pages[1]);
+      // Create video models from the YouTube videos.
+      const videos = VideoFactory.createYoutubeVideos(
+        createdChannel.id,
+        youtubeVideos,
+      );
 
+      // Create default pages for the channel
+      const defaultPages = PageFactory.createDefaultPages(createdChannel.id);
+      const [createdHomePage, createdAboutPage] = defaultPages.map(
+        (page) => new this.pageModel<Page>(page),
+      );
+
+      // Create the default channel navbar with links to the home and about pages
       const navbar = ChannelFactory.createDefaultChannelNavbar(
         createdHomePage.id,
         createdAboutPage.id,
@@ -61,14 +77,17 @@ export class ChannelService {
 
       createdChannel.navbar = navbar;
 
+      // Save the channel, home page, about page, and videos to the database
       await createdChannel.save({ session });
       await createdHomePage.save({ session });
       await createdAboutPage.save({ session });
+      await this.videoModel.insertMany(videos);
 
       await session.commitTransaction();
 
-      return createdChannel;
+      return createdChannel.toJSON();
     } catch (error) {
+      // Abort the transaction if an error occurs
       await session.abortTransaction();
       throw error;
     } finally {
@@ -76,12 +95,18 @@ export class ChannelService {
     }
   }
 
-  async findChannels(getChannelsDto: FindChannelsDto, user: User) {
-    return;
+  async findChannels(findChannelsDto: FindChannelsDto) {
+    console.log(findChannelsDto);
+
+    return (await this.channelModel.findOne(findChannelsDto)).toJSON();
   }
 
   async findOneByChannelId(channelId: string) {
     return (await this.channelModel.findOne({ _id: channelId })).toJSON();
+  }
+
+  async findOneBySlug(slug: string) {
+    return (await this.channelModel.findOne({ slug: slug })).toJSON();
   }
 
   async findChannelGeneralSettingsByChannelId(channelId: string) {
@@ -119,13 +144,16 @@ export class ChannelService {
     const homeNavItem = navbar[0];
     const aboutNavItem = navbar[navbar.length - 1];
 
+    // Find all default pages for the channel
     const defaultPages = await this.pageService.findAll(channelId, {
       pageTypes: [PageType.DEFAULT],
     });
 
+    // Find the home and about pages
     const homePage = defaultPages.find((page) => page.slug === 'home');
     const aboutPage = defaultPages.find((page) => page.slug === 'about');
 
+    // Check if home and about navbar items have changed, throw an exception if they have.
     if (
       homeNavItem.pageId !== homePage.id ||
       aboutNavItem.pageId !== aboutPage.id
@@ -135,6 +163,7 @@ export class ChannelService {
       );
     }
 
+    // Update the channel with the new navbar settings and return the updated channel
     return await this.channelModel.findOneAndUpdate(
       { _id: channelId },
       channelNavbarDto,

@@ -24,7 +24,7 @@ export class DashboardViewController {
   constructor(private readonly channelService: ChannelService) {}
 
   @Post()
-  createChannel(
+  async createChannel(
     @Body() createChannelDto: CreateChannelDto,
     @Req() request: FastifyRequest,
   ) {
@@ -35,14 +35,8 @@ export class DashboardViewController {
   }
 
   @Get()
-  findChannels(
-    @Query() findChannelsDto: FindChannelsDto,
-    @Req() request: FastifyRequest,
-  ) {
-    return this.channelService.findChannels(
-      findChannelsDto,
-      (request as any).user,
-    );
+  async findChannels(@Query() findChannelsDto: FindChannelsDto) {
+    return this.channelService.findChannels(findChannelsDto);
   }
 
   @Get(':channelId')

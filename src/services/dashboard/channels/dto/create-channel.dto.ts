@@ -27,6 +27,10 @@ export class CreateChannelDto {
 
   @IsNotEmpty()
   @IsString()
+  youtubeChannelId: string;
+
+  @IsNotEmpty()
+  @IsString()
   @IsOptional()
   about?: string;
 

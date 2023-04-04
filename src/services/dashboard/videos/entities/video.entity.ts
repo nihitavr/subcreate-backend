@@ -17,7 +17,7 @@ export class Video {
   description: string;
 
   @Prop({ required: true, default: 0 })
-  durationInSecs: number;
+  durationInSecs?: number;
 
   @Prop({ default: [] })
   tags: string[];

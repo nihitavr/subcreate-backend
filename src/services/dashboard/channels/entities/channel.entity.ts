@@ -20,6 +20,9 @@ export class Channel extends BaseEntity {
   slug: string;
 
   @Prop({ required: true })
+  youtubeChannelId: string;
+
+  @Prop({ required: true })
   name: string;
 
   @Prop()
