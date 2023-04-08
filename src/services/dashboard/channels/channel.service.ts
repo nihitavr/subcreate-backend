@@ -19,6 +19,7 @@ import { ChannelAppearance } from './entities/classes/channel-appearance.dto';
 import { YoutubeService } from 'src/services/youtube/youtube.service';
 import { VideoFactory } from '../videos/video.factory';
 import { Video, VideoDoc } from '../videos/entities/video.entity';
+import { toJSON } from 'src/lib/utils/mongo.utils';
 
 @Injectable()
 export class ChannelService {
@@ -96,9 +97,7 @@ export class ChannelService {
   }
 
   async findChannels(findChannelsDto: FindChannelsDto) {
-    console.log(findChannelsDto);
-
-    return (await this.channelModel.findOne(findChannelsDto)).toJSON();
+    return toJSON(await this.channelModel.find(findChannelsDto));
   }
 
   async findOneByChannelId(channelId: string) {
