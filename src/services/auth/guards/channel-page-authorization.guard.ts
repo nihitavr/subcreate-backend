@@ -2,10 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UnauthorisedException } from 'src/lib/exceptions/exceptions/custom.exceptions';
-import {
-  Page,
-  PageDoc,
-} from 'src/services/dashboard/pages/entities/page.entity';
+import { Page, PageDoc } from 'src/services/core/pages/entities/page.entity';
 
 @Injectable()
 export class ChannelPageAuthorizationGuard implements CanActivate {

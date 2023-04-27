@@ -18,7 +18,7 @@ export class JwtAuthGuard {
 
     const user = await firebaseAuth.verifyIdToken(token);
 
-    if (user) {
+    if (user && !request.user) {
       request.user = await this.userModel.findOne({ uid: user?.user_id });
       return true;
     }

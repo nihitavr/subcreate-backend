@@ -1,21 +1,18 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Channel } from 'diagnostics_channel';
-import { ChannelSchema } from 'src/services/dashboard/channels/entities/channel.entity';
+import { ChannelSchema } from 'src/services/core/channels/entities/channel.entity';
 import { JwtAuthGuard } from './jwt.guard';
-import {
-  Page,
-  PageSchema,
-} from 'src/services/dashboard/pages/entities/page.entity';
+import { Page, PageSchema } from 'src/services/core/pages/entities/page.entity';
 import { UserChannelAuthorizationGuard } from './user-channel-authorization.guard';
 import {
   Subscription,
   SubscriptionSchema,
-} from 'src/services/dashboard/subscriptions/entities/subscription.entity';
+} from 'src/services/core/subscriptions/entities/subscription.entity';
 import {
   Video,
   VideoSchema,
-} from 'src/services/dashboard/videos/entities/video.entity';
+} from 'src/services/core/videos/entities/video.entity';
 import { User, UserSchema } from 'src/services/users/entities/user.entity';
 
 @Module({

@@ -5,7 +5,7 @@ import { UnauthorisedException } from 'src/lib/exceptions/exceptions/custom.exce
 import {
   Video,
   VideoDoc,
-} from 'src/services/dashboard/videos/entities/video.entity';
+} from 'src/services/core/videos/entities/video.entity';
 
 @Injectable()
 export class ChannelVideoAuthorizationGuard implements CanActivate {

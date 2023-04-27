@@ -33,7 +33,7 @@ export class YoutubeService extends HTTPFetcher {
             return {
               videoId: item.id.videoId,
               ...item.snippet,
-              thumbnail: item.snippet.thumbnails.medium.url,
+              thumbnail: item.snippet.thumbnails.high.url,
             };
           }),
         );

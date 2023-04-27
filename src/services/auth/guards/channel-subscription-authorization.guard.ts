@@ -5,7 +5,7 @@ import { UnauthorisedException } from 'src/lib/exceptions/exceptions/custom.exce
 import {
   Subscription,
   SubscriptionDoc,
-} from 'src/services/dashboard/subscriptions/entities/subscription.entity';
+} from 'src/services/core/subscriptions/entities/subscription.entity';
 
 @Injectable()
 export class ChannelSubscriptionAuthorizationGuard implements CanActivate {
