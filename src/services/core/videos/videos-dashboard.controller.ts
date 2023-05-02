@@ -72,6 +72,15 @@ export class VideosDashboardController {
     this.videosService.remove(videoId);
   }
 
+  @Post('pages')
+  @HttpCode(HttpStatus.ACCEPTED)
+  updatePages(
+    @Param('channelId') channelId: string,
+    @Body() updateVideoPagesDto: UpdateVideoPagesDto,
+  ) {
+    this.videosService.updateVideoPages(channelId, updateVideoPagesDto);
+  }
+
   @Post('publish')
   @HttpCode(HttpStatus.ACCEPTED)
   publish(
@@ -88,14 +97,5 @@ export class VideosDashboardController {
     @Body() unpublishVideos: UnpublishVideosDto,
   ) {
     this.videosService.unpublishVideos(channelId, unpublishVideos);
-  }
-
-  @Post('pages')
-  @HttpCode(HttpStatus.ACCEPTED)
-  updatePages(
-    @Param('channelId') channelId: string,
-    @Body() updateVideoPagesDto: UpdateVideoPagesDto,
-  ) {
-    this.videosService.updateVideoPages(channelId, updateVideoPagesDto);
   }
 }

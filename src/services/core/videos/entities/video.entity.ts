@@ -34,9 +34,6 @@ export class Video {
   @Prop({ default: [] })
   subscriptionIds: ObjectId[] | string[];
 
-  @Prop({ default: [] })
-  pageIds: ObjectId[] | string[];
-
   @Prop({ default: null })
   publishedAt: Date;
 

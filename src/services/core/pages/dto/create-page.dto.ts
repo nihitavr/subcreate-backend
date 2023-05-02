@@ -38,4 +38,6 @@ export class CreatePageDto {
   @ValidateNested({ each: true })
   @Type(() => PageSectionLayout)
   sections: PageSectionLayout[];
+
+  videoIds = [];
 }

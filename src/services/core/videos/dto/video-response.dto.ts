@@ -1,4 +1,5 @@
 export class VideoResponseData {
+  id: string;
   channelId: string;
   title: string;
   description: string;

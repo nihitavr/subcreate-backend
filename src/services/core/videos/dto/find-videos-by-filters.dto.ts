@@ -26,6 +26,8 @@ export class FindVideosFilter {
   pageId: string | any;
 
   pageIds: string[] | any;
+
+  _id?: { $in: any[] };
 }
 
 export class FindVideosSort {

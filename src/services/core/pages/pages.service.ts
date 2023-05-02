@@ -9,12 +9,15 @@ import { FindChannelPagesByFiltersDto } from './dto/find-channel-pages-by-filter
 import { UpdatePageDto } from './dto/update-page.dto';
 import { Page, PageDoc } from './entities/page.entity';
 import { FindPagesByFiltersDto } from './dto/find-pages-by-filters';
+import { VideoPage, VideoPageDoc } from '../videos/entities/video-page.entity';
 
 @Injectable()
 export class PageService {
   constructor(
     @InjectModel(Page.name)
     private pageModel: Model<PageDoc> & SoftDeleteModel<PageDoc>,
+    @InjectModel(VideoPage.name)
+    private videoPageModel: Model<VideoPageDoc> & SoftDeleteModel<VideoPageDoc>,
   ) {}
 
   async create(channelId: string, createPageDto: CreatePageDto) {
@@ -27,8 +30,6 @@ export class PageService {
   async findPagesByFilters(
     findPagesByFilters: FindPagesByFiltersDto,
   ): Promise<Page[]> {
-    console.log(findPagesByFilters);
-
     return (
       await this.pageModel.find(findPagesByFilters).sort({ createdAt: 1 })
     ).map(toJSON);
@@ -65,8 +66,12 @@ export class PageService {
     });
   }
 
-  async remove(pageId: string) {
-    await this.pageModel.deleteById(pageId);
+  async remove(pageId: string, channelId: string) {
+    // Delete page
+    await this.pageModel.delete({ _id: pageId, channelId: channelId });
+
+    // Delete videoPages for the page
+    await this.videoPageModel.delete({ pageId, channelId });
   }
 
   async doesSlugExist(

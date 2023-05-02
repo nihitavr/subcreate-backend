@@ -1,4 +1,3 @@
-import { title } from 'process';
 import { Page } from './entities/page.entity';
 import { PageSectionLayoutType } from './enums/page-section-layout-type.enum';
 import { PageSectionType } from './enums/page-section-type.enum';
@@ -32,6 +31,7 @@ export class PageFactory {
             layoutType: PageSectionLayoutType.Grid1x5N,
           },
         ],
+        videoIds: [],
       },
       {
         channelId: channelId,
@@ -50,6 +50,7 @@ export class PageFactory {
             sectionType: PageSectionType.ABOUT,
           },
         ],
+        videoIds: [],
       },
     ];
   }

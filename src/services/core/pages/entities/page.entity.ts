@@ -32,6 +32,9 @@ export class Page extends BaseEntity {
 
   @Prop({ required: true })
   sections: PageSectionLayout[];
+
+  @Prop({ default: [] })
+  videoIds: ObjectId[] | string[];
 }
 
 export const PageSchema = SchemaFactory.createForClass(Page);

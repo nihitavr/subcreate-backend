@@ -18,6 +18,7 @@ import { JwtAuthGuard } from 'src/services/auth/guards/jwt.guard';
 import { ChannelPageAuthorizationGuard } from 'src/services/auth/guards/channel-page-authorization.guard';
 import { FindChannelPagesByFiltersDto } from './dto/find-channel-pages-by-filters.dto';
 import { UserChannelAuthorizationGuard } from 'src/services/auth/guards/user-channel-authorization.guard';
+import { UpdateVideoPagesDto } from '../videos/dto/update-video-pages';
 
 @UseGuards(UserChannelAuthorizationGuard)
 @UseGuards(JwtAuthGuard)
@@ -62,8 +63,11 @@ export class PageDashboardController {
   @Delete(':pageId')
   @UseGuards(ChannelPageAuthorizationGuard)
   @HttpCode(HttpStatus.ACCEPTED)
-  remove(@Param('pageId') pageId: string) {
-    return this.pageService.remove(pageId);
+  remove(
+    @Param('channelId') channelId: string,
+    @Param('pageId') pageId: string,
+  ) {
+    return this.pageService.remove(pageId, channelId);
   }
 
   @Get('does-slug-exist')
