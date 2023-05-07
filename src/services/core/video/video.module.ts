@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
-import { VideosService } from './videos.service';
-import { VideosDashboardController } from './videos-dashboard.controller';
+import { VideoService } from './video.service';
+import { VideoDashboardController } from './video-dashboard.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Video, VideoSchema } from './entities/video.entity';
 import { GuardsModule } from 'src/services/auth/guards/guards.module';
-import { SubscriptionModule } from '../subscriptions/subscriptions.module';
-import { PageModule } from '../pages/pages.module';
-import { VideosController } from './videos.controller';
+import { SubscriptionModule } from '../subscription/subscription.module';
+import { PageModule } from '../page/page.module';
+import { VideoController } from './video.controller';
 import { VideoPage, VideoPageSchema } from './entities/video-page.entity';
+import { BlogModule } from '../blog/blog.module';
 
 @Module({
   imports: [
@@ -18,8 +19,9 @@ import { VideoPage, VideoPageSchema } from './entities/video-page.entity';
     GuardsModule,
     SubscriptionModule,
     PageModule,
+    BlogModule,
   ],
-  controllers: [VideosDashboardController, VideosController],
-  providers: [VideosService],
+  controllers: [VideoDashboardController, VideoController],
+  providers: [VideoService],
 })
-export class VideosModule {}
+export class VideoModule {}

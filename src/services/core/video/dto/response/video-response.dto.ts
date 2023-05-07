@@ -1,6 +1,9 @@
-export class VideoResponseData {
+import { Blog } from 'src/services/core/blog/entities/blog.entity';
+
+export class VideoResponse {
   id: string;
   channelId: string;
+  blogId: string;
   title: string;
   description: string;
   durationInSecs: number;
@@ -14,16 +17,16 @@ export class VideoResponseData {
   isPublished: boolean;
   isFileUploaded: boolean;
 
-  subscriptions: VideoResSubscriptionDto[];
-  pages: VideoResPageDto[];
+  subscriptions: VideoResponseSubscription[];
+  pages: VideoResponsePage[];
 }
 
-class VideoResPageDto {
+class VideoResponsePage {
   id: string;
   title: string;
 }
 
-class VideoResSubscriptionDto {
+class VideoResponseSubscription {
   id: string;
   title: string;
 }

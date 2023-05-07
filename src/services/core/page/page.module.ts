@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { PageService } from './pages.service';
-import { PageDashboardController } from './pages-dashboard.controller';
+import { PageService } from './page.service';
+import { PageDashboardController } from './page-dashboard.controller';
 import { Page, PageSchema } from './entities/page.entity';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GuardsModule } from 'src/services/auth/guards/guards.module';
-import { PageController } from './pages.controller';
+import { PageController } from './page.controller';
 import {
   VideoPage,
   VideoPageSchema,
-} from '../videos/entities/video-page.entity';
+} from '../video/entities/video-page.entity';
 
 @Module({
   imports: [

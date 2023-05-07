@@ -10,6 +10,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 import { ObjectId } from 'mongoose';
+import { Thumbnails } from '../../entities/video.entity';
 
 export class CreateVideoDto {
   channelId: ObjectId | string;
@@ -31,10 +32,8 @@ export class CreateVideoDto {
   @IsOptional()
   tags: string[];
 
-  @IsUrl()
-  @ValidateIf((o) => o.thumbnailURL)
   @IsOptional()
-  thumbnailURL: string;
+  thumbnails: Thumbnails;
 
   @IsUrl()
   @ValidateIf((o) => o.originalURL)

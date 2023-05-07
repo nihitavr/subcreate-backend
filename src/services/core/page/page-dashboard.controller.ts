@@ -11,14 +11,13 @@ import {
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
-import { PageService } from './pages.service';
+import { PageService } from './page.service';
 import { CreatePageDto } from './dto/create-page.dto';
 import { UpdatePageDto } from './dto/update-page.dto';
 import { JwtAuthGuard } from 'src/services/auth/guards/jwt.guard';
 import { ChannelPageAuthorizationGuard } from 'src/services/auth/guards/channel-page-authorization.guard';
 import { FindChannelPagesByFiltersDto } from './dto/find-channel-pages-by-filters.dto';
 import { UserChannelAuthorizationGuard } from 'src/services/auth/guards/user-channel-authorization.guard';
-import { UpdateVideoPagesDto } from '../videos/dto/update-video-pages';
 
 @UseGuards(UserChannelAuthorizationGuard)
 @UseGuards(JwtAuthGuard)

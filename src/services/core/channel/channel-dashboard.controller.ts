@@ -8,7 +8,6 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
-import { FastifyRequest } from 'fastify';
 import { JwtAuthGuard } from 'src/services/auth/guards/jwt.guard';
 import { UserChannelAuthorizationGuard } from 'src/services/auth/guards/user-channel-authorization.guard';
 import { ChannelService } from './channel.service';
@@ -16,6 +15,7 @@ import { ChannelGeneralSettingsDto } from './dto/channel-general-settings.dto';
 import { ChannelNavbarDto } from './dto/channel-navbar.dto';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { ChannelAppearance } from './entities/classes/channel-appearance.dto';
+import { Request } from 'express';
 
 @Controller('dashboard/channels')
 @UseGuards(JwtAuthGuard)
@@ -25,12 +25,17 @@ export class ChannelDashboardController {
   @Post()
   async createChannel(
     @Body() createChannelDto: CreateChannelDto,
-    @Req() request: FastifyRequest,
+    @Req() request: Request,
   ) {
     return this.channelService.createChannel(
       createChannelDto,
       (request as any).user,
     );
+  }
+
+  @Get('does-slug-exist')
+  doesUsernameExist(@Query('slug') slug: string) {
+    return this.channelService.doesSlugExist(slug);
   }
 
   @Get(':channelId')
@@ -99,10 +104,5 @@ export class ChannelDashboardController {
   @UseGuards(UserChannelAuthorizationGuard)
   findChannelSeoSettings(@Param('channelId') id: string) {
     return this.channelService.findChannelSeoSettings(id);
-  }
-
-  @Get('does-slug-exist')
-  doesUsernameExist(@Query('slug') slug: string) {
-    return this.channelService.doesSlugExist(slug);
   }
 }

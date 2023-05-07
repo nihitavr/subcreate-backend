@@ -7,19 +7,21 @@ import { Channel, ChannelDoc } from './entities/channel.entity';
 import { DoesSlugExistResponse } from './dto/does-slug-exist.response';
 import { User } from 'src/services/users/entities/user.entity';
 import { ChannelFactory } from './channel.factory';
-import { Page, PageDoc } from '../pages/entities/page.entity';
-import { PageFactory } from '../pages/pages.factory';
+import { Page, PageDoc } from '../page/entities/page.entity';
+import { PageFactory } from '../page/page.factory';
 import { ChannelGeneralSettingsDto } from './dto/channel-general-settings.dto';
 import { FindChannelsDto } from './dto/find-channels.dto';
 import { ChannelNavbarDto } from './dto/channel-navbar.dto';
-import { PageService } from '../pages/pages.service';
-import { PageType } from '../pages/enums/page-type.enum';
+import { PageService } from '../page/page.service';
+import { PageType } from '../page/enums/page-type.enum';
 import { NotAcceptableException } from 'src/lib/exceptions/exceptions/custom.exceptions';
 import { ChannelAppearance } from './entities/classes/channel-appearance.dto';
 import { YoutubeService } from 'src/services/youtube/youtube.service';
-import { VideoFactory } from '../videos/video.factory';
-import { Video, VideoDoc } from '../videos/entities/video.entity';
+import { VideoFactory } from '../video/video.factory';
+import { Video, VideoDoc } from '../video/entities/video.entity';
 import { toJSON } from 'src/lib/utils/mongo.utils';
+import { BlogFactory } from '../blog/blog.factory';
+import { Blog, BlogDoc } from '../blog/entities/blog.entity';
 
 @Injectable()
 export class ChannelService {
@@ -27,6 +29,7 @@ export class ChannelService {
     @InjectModel(Channel.name) private channelModel: Model<ChannelDoc>,
     @InjectModel(Page.name) private pageModel: Model<PageDoc>,
     @InjectModel(Video.name) private videoModel: Model<VideoDoc>,
+    @InjectModel(Blog.name) private blogModel: Model<BlogDoc>,
     @InjectConnection() private connection: Connection,
     private pageService: PageService,
     private youtubeService: YoutubeService,
@@ -58,10 +61,22 @@ export class ChannelService {
         createChannelDto.youtubeChannelId,
       );
 
+      const videoIdBlogMap = BlogFactory.createVideoIdBlogMapFromYoutubeVideos(
+        createdChannel.id,
+        youtubeVideos,
+      );
+
+      Object.entries(videoIdBlogMap).forEach(async ([videoId, blog]) => {
+        videoIdBlogMap[videoId] = new this.blogModel<Blog>(blog);
+      });
+
+      const blogModels = Object.values(videoIdBlogMap);
+
       // Create video models from the YouTube videos.
       const videos = VideoFactory.createYoutubeVideos(
         createdChannel.id,
         youtubeVideos,
+        videoIdBlogMap,
       );
 
       // Create default pages for the channel
@@ -82,6 +97,7 @@ export class ChannelService {
       await createdChannel.save({ session });
       await createdHomePage.save({ session });
       await createdAboutPage.save({ session });
+      await this.blogModel.insertMany(blogModels);
       await this.videoModel.insertMany(videos);
 
       await session.commitTransaction();

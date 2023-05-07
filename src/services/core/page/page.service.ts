@@ -3,13 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SoftDeleteModel } from 'mongoose-delete';
 import { toJSON } from 'src/lib/utils/mongo.utils';
-import { DoesSlugExistResponse } from '../channels/dto/does-slug-exist.response';
+import { DoesSlugExistResponse } from '../channel/dto/does-slug-exist.response';
 import { CreatePageDto } from './dto/create-page.dto';
 import { FindChannelPagesByFiltersDto } from './dto/find-channel-pages-by-filters.dto';
 import { UpdatePageDto } from './dto/update-page.dto';
 import { Page, PageDoc } from './entities/page.entity';
 import { FindPagesByFiltersDto } from './dto/find-pages-by-filters';
-import { VideoPage, VideoPageDoc } from '../videos/entities/video-page.entity';
+import { VideoPage, VideoPageDoc } from '../video/entities/video-page.entity';
 
 @Injectable()
 export class PageService {

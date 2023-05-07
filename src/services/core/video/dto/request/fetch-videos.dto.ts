@@ -1,6 +1,6 @@
-import { VideoResponseData } from './video-response.dto';
+import { VideoResponse } from '../response/video-response.dto';
 
 export class VideoResponseDto {
-  data: VideoResponseData[];
+  data: VideoResponse[];
   pagination: { page: number; limit: number; total: number; size: number };
 }

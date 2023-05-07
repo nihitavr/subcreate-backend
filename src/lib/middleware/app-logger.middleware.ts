@@ -1,29 +1,31 @@
 import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
-import { FastifyRequest, FastifyReply } from 'fastify';
 
 import { stringUtils } from '../utils';
+import { Request, Response, response } from 'express';
 
 @Injectable()
 export class HttpLoggerMiddleware implements NestMiddleware {
   private logger = new Logger('HTTP');
 
-  use(req: FastifyRequest, res: FastifyReply, next: () => void): void {
-    const { ip, method, originalUrl } = req as any;
+  use(req: Request, res: Response, next: () => void): void {
+    const { ip, method, originalUrl: url } = req;
     const userAgent = req.headers['user-agent'] || '';
 
-    (res as any).on('finish', () => {
-      const { statusCode } = res;
+    response.on('close', () => {
+      const { statusCode } = response;
+      const contentLength = response.get('content-length');
+
       // Only log for 1 % if url has `health`
       if (
-        !stringUtils.isEmpty(originalUrl) &&
-        originalUrl.includes('health') &&
+        !stringUtils.isEmpty(url) &&
+        url.includes('health') &&
         Math.random() > 0.01
       ) {
         return;
       }
 
       this.logger.log(
-        `${method} ${originalUrl} ${statusCode} - ${userAgent} - ${ip}`,
+        `${method} ${url} ${statusCode} ${contentLength} - ${userAgent} ${ip}`,
       );
     });
 

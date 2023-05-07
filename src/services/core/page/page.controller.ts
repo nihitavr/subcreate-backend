@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { PageService } from './pages.service';
+import { PageService } from './page.service';
 import { FindPagesByFiltersDto } from './dto/find-pages-by-filters';
 
 @Controller('pages')

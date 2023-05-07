@@ -1,5 +1,5 @@
 import { Catch, ExceptionFilter, ArgumentsHost, Logger } from '@nestjs/common';
-import { FastifyReply } from 'fastify';
+import { Response } from 'express';
 import { MongoError } from 'mongodb';
 
 @Catch()
@@ -8,7 +8,7 @@ export class MongoExceptionFilter implements ExceptionFilter {
 
   catch(exception: MongoError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse() as FastifyReply;
+    const response = ctx.getResponse() as Response;
 
     if (exception.name == 'MongoServerError') {
       const status = exception.code === 11000 ? 409 : 500;

@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  Allow,
   IsBoolean,
   IsIn,
   IsNotEmptyObject,
@@ -27,6 +28,7 @@ export class FindChannelVideosByFiltersDto {
   @IsNotEmptyObject()
   @ValidateNested()
   @Type(() => FindChannelVideosFilter)
+  @Allow()
   filter: FindChannelVideosFilter;
 
   @IsNotEmptyObject()

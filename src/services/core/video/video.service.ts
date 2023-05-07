@@ -3,23 +3,24 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SoftDeleteModel } from 'mongoose-delete';
 import { toJSON } from 'src/lib/utils/mongo.utils';
-import { PageType } from '../pages/enums/page-type.enum';
-import { PageService } from '../pages/pages.service';
-import { SubscriptionService } from '../subscriptions/subscriptions.service';
-import { CreateVideoDto } from './dto/create-video.dto';
-import { VideoResponseDto } from './dto/fetch-videos.dto';
-import { FindVideosByFiltersDto } from './dto/find-videos-by-filters.dto';
-import { PublishVideosDto } from './dto/publish-videos.dto';
-import { UnpublishVideosDto } from './dto/unpublish-videos.dto';
-import { UpdateVideoPagesDto } from './dto/update-video-pages';
-import { UpdateVideoDto } from './dto/update-video.dto';
-import { VideoResponseData } from './dto/video-response.dto';
+import { PageType } from '../page/enums/page-type.enum';
+import { PageService } from '../page/page.service';
+import { SubscriptionService } from '../subscription/subscription.service';
+import { CreateVideoDto } from './dto/request/create-video.dto';
+import { VideoResponseDto } from './dto/request/fetch-videos.dto';
+import { FindVideosByFiltersDto } from './dto/request/find-videos-by-filters.dto';
+import { PublishVideosDto } from './dto/request/publish-videos.dto';
+import { UnpublishVideosDto } from './dto/request/unpublish-videos.dto';
+import { UpdateVideoPagesDto } from './dto/request/update-video-pages';
+import { UpdateVideoDto } from './dto/request/update-video.dto';
+import { VideoResponse } from './dto/response/video-response.dto';
 import { Video, VideoDoc } from './entities/video.entity';
-import { FindChannelVideosByFiltersDto } from './dto/find-channel-videos-by-filters.dto';
+import { FindChannelVideosByFiltersDto } from './dto/request/find-channel-videos-by-filters.dto';
 import { VideoPage, VideoPageDoc } from './entities/video-page.entity';
+import { BlogService } from '../blog/blog.service';
 
 @Injectable()
-export class VideosService {
+export class VideoService {
   constructor(
     @InjectModel(Video.name)
     private videoModel: Model<VideoDoc> & SoftDeleteModel<VideoDoc>,
@@ -27,6 +28,7 @@ export class VideosService {
     private videoPageModel: Model<VideoPageDoc> & SoftDeleteModel<VideoPageDoc>,
     private subscriptionService: SubscriptionService,
     private pageService: PageService,
+    private blogService: BlogService,
   ) {}
 
   async create(channelId: string, createVideoDto: CreateVideoDto) {
@@ -55,61 +57,27 @@ export class VideosService {
 
     findVideosDto.filters.isPublished = true;
 
-    const total = await this.videoModel.count(findVideosDto.filters);
-
-    let videos = (
-      await this.videoModel
-        .find(findVideosDto.filters)
-        .sort({ ...findVideosDto.sort })
-        .skip(findVideosDto.pagination.limit * findVideosDto.pagination.page)
-        .limit(findVideosDto.pagination.limit)
-    ).map(toJSON) as VideoResponseData[];
-
-    videos = await this.createVideoResponses(
-      findVideosDto.filters.channelId,
-      videos,
+    return this._findVideosByFilters(
+      findVideosDto.filters,
+      findVideosDto.sort,
+      findVideosDto.pagination.page,
+      findVideosDto.pagination.limit,
     );
-
-    return {
-      pagination: {
-        total,
-        page: findVideosDto.pagination.page,
-        limit: findVideosDto.pagination.limit,
-        size: videos.length,
-      },
-      data: videos,
-    };
   }
 
   async findChannelVideosByFilters(
     channelId: string,
     findVideosDto: FindChannelVideosByFiltersDto,
   ): Promise<VideoResponseDto> {
-    const total = await this.videoModel.count({
-      channelId,
-      ...findVideosDto.filter,
-    });
-
-    let videos = (
-      await this.videoModel
-        .find({ channelId, ...findVideosDto.filter })
-        .sort({ ...findVideosDto.sort })
-        .skip(findVideosDto.pagination.limit * findVideosDto.pagination.page)
-        .limit(findVideosDto.pagination.limit)
-    ).map(toJSON) as VideoResponseData[];
-
-    // Create video responses that need to be returned
-    videos = await this.createVideoResponses(channelId, videos);
-
-    return {
-      pagination: {
-        total,
-        page: findVideosDto.pagination.page,
-        limit: findVideosDto.pagination.limit,
-        size: videos.length,
+    return await this._findVideosByFilters(
+      {
+        channelId,
+        ...findVideosDto.filter,
       },
-      data: videos,
-    };
+      findVideosDto.sort,
+      findVideosDto.pagination.page,
+      findVideosDto.pagination.limit,
+    );
   }
 
   async findOne(channelId: string, videoId: string) {
@@ -118,7 +86,7 @@ export class VideosService {
         _id: videoId,
         channelId,
       })
-    ).toJSON() as VideoResponseData;
+    ).toJSON() as VideoResponse;
 
     const videoResDto = await this.createVideoResponse(
       video.channelId as string,
@@ -256,10 +224,7 @@ export class VideosService {
     );
   }
 
-  private async createVideoResponse(
-    channelId: string,
-    video: VideoResponseData,
-  ) {
+  private async createVideoResponse(channelId: string, video: VideoResponse) {
     const videos = await this.createVideoResponses(channelId, [video]);
     return videos[0];
   }
@@ -267,8 +232,8 @@ export class VideosService {
   // Add subscriptions and pages to the video response
   private async createVideoResponses(
     channelId: string,
-    videos: VideoResponseData[],
-  ): Promise<VideoResponseData[]> {
+    videos: VideoResponse[],
+  ): Promise<VideoResponse[]> {
     // const subscriptions = await this.subscriptionService.findAll(channelId);
 
     // Get all pages for channel from database
@@ -278,6 +243,14 @@ export class VideosService {
 
     // Extract videoIds from videos
     const videoIds = videos.map((video) => video.id);
+    const blogIds = videos.map((video) => video.blogId);
+
+    const blogs = await this.blogService.findAllByIds(blogIds);
+
+    const blogIdToBlogMap = blogs.reduce((prev, blog) => {
+      prev[blog.id] = blog;
+      return prev;
+    }, {});
 
     // Get all video pages for the given videoIds.
     const videoPages = await this.videoPageModel.find({
@@ -317,11 +290,44 @@ export class VideosService {
       //   }
       // });
 
+      // Replace blog's first paragraph with video description
+      video.description =
+        blogIdToBlogMap[video.blogId]?.editorData?.blocks[0]?.data?.text || '';
+
       video.pages = pages
         .filter((page) => video.pageIds.includes(page.id as any))
         .map((page) => ({ id: page.id, title: page.title }));
     });
 
     return videos;
+  }
+
+  private async _findVideosByFilters(
+    filters: { channelId: string } & any,
+    sort: any,
+    page: number,
+    limit: number,
+  ) {
+    const total = await this.videoModel.count(filters);
+
+    let videos = (
+      await this.videoModel
+        .find(filters)
+        .sort(sort)
+        .skip(limit * page)
+        .limit(limit)
+    ).map(toJSON) as VideoResponse[];
+
+    videos = await this.createVideoResponses(filters.channelId, videos);
+
+    return {
+      pagination: {
+        total,
+        page: page,
+        limit: limit,
+        size: videos.length,
+      },
+      data: videos,
+    };
   }
 }

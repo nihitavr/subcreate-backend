@@ -2,10 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UnauthorisedException } from 'src/lib/exceptions/exceptions/custom.exceptions';
-import {
-  Video,
-  VideoDoc,
-} from 'src/services/core/videos/entities/video.entity';
+import { Video, VideoDoc } from 'src/services/core/video/entities/video.entity';
 
 @Injectable()
 export class ChannelVideoAuthorizationGuard implements CanActivate {

@@ -9,31 +9,32 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
-import { VideosService } from './videos.service';
-import { CreateVideoDto } from './dto/create-video.dto';
-import { UpdateVideoDto } from './dto/update-video.dto';
+import { VideoService } from './video.service';
+import { CreateVideoDto } from './dto/request/create-video.dto';
+import { UpdateVideoDto } from './dto/request/update-video.dto';
 import { JwtAuthGuard } from 'src/services/auth/guards/jwt.guard';
 import { UserChannelAuthorizationGuard } from 'src/services/auth/guards/user-channel-authorization.guard';
 import { ChannelVideoAuthorizationGuard } from 'src/services/auth/guards/channel-video-authorization.guard';
-import { PublishVideosDto } from './dto/publish-videos.dto';
-import { UnpublishVideosDto } from './dto/unpublish-videos.dto';
-import { UpdateVideoPagesDto } from './dto/update-video-pages';
-import { FindChannelVideosByFiltersDto } from './dto/find-channel-videos-by-filters.dto';
+import { PublishVideosDto } from './dto/request/publish-videos.dto';
+import { UnpublishVideosDto } from './dto/request/unpublish-videos.dto';
+import { UpdateVideoPagesDto } from './dto/request/update-video-pages';
+import { FindChannelVideosByFiltersDto } from './dto/request/find-channel-videos-by-filters.dto';
 
-@UseGuards(UserChannelAuthorizationGuard)
-@UseGuards(JwtAuthGuard)
+// @UseGuards(UserChannelAuthorizationGuard)
+// @UseGuards(JwtAuthGuard)
 @Controller('dashboard/channels/:channelId/videos')
-export class VideosDashboardController {
-  constructor(private readonly videosService: VideosService) {}
+export class VideoDashboardController {
+  constructor(private readonly videosService: VideoService) {}
 
-  @Post()
-  create(
-    @Param('channelId') channelId: string,
-    @Body() createVideoDto: CreateVideoDto,
-  ) {
-    return this.videosService.create(channelId, createVideoDto);
-  }
+  // @Post()
+  // create(
+  //   @Param('channelId') channelId: string,
+  //   @Body() createVideoDto: CreateVideoDto,
+  // ) {
+  //   return this.videosService.create(channelId, createVideoDto);
+  // }
 
   @Post('fetch')
   @HttpCode(HttpStatus.OK)
@@ -54,6 +55,18 @@ export class VideosDashboardController {
     @Param('videoId') videoId: string,
   ) {
     return await this.videosService.findOne(channelId, videoId);
+  }
+
+  @Get('list')
+  @HttpCode(HttpStatus.OK)
+  findChannelVideosByFiltersList(
+    @Param('channelId') channelId: string,
+    @Query() findChannelVideosByFiltersDto: FindChannelVideosByFiltersDto,
+  ) {
+    return this.videosService.findChannelVideosByFilters(
+      channelId,
+      findChannelVideosByFiltersDto,
+    );
   }
 
   @Patch(':videoId')

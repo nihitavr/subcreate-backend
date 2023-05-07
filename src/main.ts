@@ -3,10 +3,6 @@ dotenv.config();
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import {
-  FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { SERVICE_ID } from './config/service.config';
 import { MongoExceptionFilter } from './lib/exceptions/filters/mongo-exception.filter';
@@ -15,10 +11,10 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpsConfig } from './config/https.config';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    new FastifyAdapter(),
-  );
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+
   app.enableCors({
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',

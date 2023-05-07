@@ -3,6 +3,28 @@ import mongoose, { HydratedDocument, ObjectId } from 'mongoose';
 import { SchemaToJson } from 'src/lib/utils/mongo.utils';
 import * as mongooseDelete from 'mongoose-delete';
 
+export class ThumbnailUrl {
+  @Prop()
+  url: string;
+
+  @Prop()
+  width: number;
+
+  @Prop()
+  height: number;
+}
+
+export class Thumbnails {
+  @Prop()
+  default: ThumbnailUrl;
+
+  @Prop()
+  medium: ThumbnailUrl;
+
+  @Prop()
+  high: ThumbnailUrl;
+}
+
 export type VideoDoc = HydratedDocument<Video>;
 
 @Schema({ timestamps: true })
@@ -13,8 +35,8 @@ export class Video {
   @Prop({ required: true })
   title: string;
 
-  @Prop({ default: '' })
-  description: string;
+  @Prop({ type: mongoose.Types.ObjectId, ref: 'Blog', required: true })
+  blogId?: ObjectId | string;
 
   @Prop({ required: true, default: 0 })
   durationInSecs?: number;
@@ -22,8 +44,8 @@ export class Video {
   @Prop({ default: [] })
   tags: string[];
 
-  @Prop({ default: '' })
-  thumbnailURL: string;
+  @Prop()
+  thumbnails: Thumbnails;
 
   @Prop({ default: '' })
   originalURL: string;
@@ -35,7 +57,7 @@ export class Video {
   subscriptionIds: ObjectId[] | string[];
 
   @Prop({ default: null })
-  publishedAt: Date;
+  publishedAt?: Date;
 
   @Prop({ default: false })
   isPublished: boolean;
