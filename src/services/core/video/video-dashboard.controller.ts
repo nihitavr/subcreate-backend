@@ -48,6 +48,14 @@ export class VideoDashboardController {
     );
   }
 
+  @Get('does-slug-exist')
+  doesSlugExist(
+    @Param('channelId') channelId: string,
+    @Query('slug') slug: string,
+  ) {
+    return this.videosService.doesSlugExist(channelId, slug);
+  }
+
   @UseGuards(ChannelVideoAuthorizationGuard)
   @Get(':videoId')
   async findOne(
@@ -55,18 +63,6 @@ export class VideoDashboardController {
     @Param('videoId') videoId: string,
   ) {
     return await this.videosService.findOne(channelId, videoId);
-  }
-
-  @Get('list')
-  @HttpCode(HttpStatus.OK)
-  findChannelVideosByFiltersList(
-    @Param('channelId') channelId: string,
-    @Query() findChannelVideosByFiltersDto: FindChannelVideosByFiltersDto,
-  ) {
-    return this.videosService.findChannelVideosByFilters(
-      channelId,
-      findChannelVideosByFiltersDto,
-    );
   }
 
   @Patch(':videoId')

@@ -33,6 +33,14 @@ export class PageDashboardController {
     return this.pageService.create(channelId, createPageDto);
   }
 
+  @Get('does-slug-exist')
+  doesUsernameExist(
+    @Param('channelId') channelId: string,
+    @Query('slug') slug: string,
+  ) {
+    return this.pageService.doesSlugExist(channelId, slug);
+  }
+
   @Get()
   findChannelPagesByFilters(
     @Param('channelId') channelId: string,
@@ -67,13 +75,5 @@ export class PageDashboardController {
     @Param('pageId') pageId: string,
   ) {
     return this.pageService.remove(pageId, channelId);
-  }
-
-  @Get('does-slug-exist')
-  doesUsernameExist(
-    @Param('channelId') channelId: string,
-    @Query('slug') slug: string,
-  ) {
-    return this.pageService.doesSlugExist(channelId, slug);
   }
 }

@@ -25,14 +25,4 @@ export class VideoController {
       findChannelVideosByFiltersDto,
     );
   }
-
-  @Get('list')
-  @HttpCode(HttpStatus.OK)
-  findChannelVideosByFiltersList(
-    @Query() findChannelVideosByFiltersDto: FindVideosByFiltersDto,
-  ) {
-    return this.videosService.findVideosByFilters(
-      findChannelVideosByFiltersDto,
-    );
-  }
 }

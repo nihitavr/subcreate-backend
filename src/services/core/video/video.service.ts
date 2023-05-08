@@ -18,6 +18,7 @@ import { Video, VideoDoc } from './entities/video.entity';
 import { FindChannelVideosByFiltersDto } from './dto/request/find-channel-videos-by-filters.dto';
 import { VideoPage, VideoPageDoc } from './entities/video-page.entity';
 import { BlogService } from '../blog/blog.service';
+import { DoesSlugExistResponse } from '../channel/dto/does-slug-exist.response';
 
 @Injectable()
 export class VideoService {
@@ -110,6 +111,19 @@ export class VideoService {
     await this.videoModel.deleteById(videoId);
   }
 
+  async doesSlugExist(
+    channelId: string,
+    slug: string,
+  ): Promise<DoesSlugExistResponse> {
+    const video = await this.videoModel.exists({ channelId, slug });
+
+    if (video) {
+      return { doesSlugExist: true, id: video._id?.toString() };
+    }
+
+    return { doesSlugExist: false };
+  }
+
   /**
    * First gets all pageIds in the database for the given videoIds.
    * Then creates list of pair of videoId and pageId to remove and add.
@@ -125,8 +139,6 @@ export class VideoService {
     updateVideoPagesDto: UpdateVideoPagesDto,
   ) {
     const videoPages = updateVideoPagesDto.videoPages;
-
-    console.log('videoPages', videoPages);
 
     // Create videoId to pageIds map with all , remove and new pageIds
     const videoPagesMap: {

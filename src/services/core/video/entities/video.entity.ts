@@ -35,6 +35,9 @@ export class Video {
   @Prop({ required: true })
   title: string;
 
+  @Prop({ required: true })
+  slug: string;
+
   @Prop({ type: mongoose.Types.ObjectId, ref: 'Blog', required: true })
   blogId?: ObjectId | string;
 
@@ -72,5 +75,5 @@ VideoSchema.plugin(mongooseDelete, {
   deletedAt: true,
 });
 VideoSchema.index({ channelId: 1 });
-VideoSchema.index({ pageIds: 1 });
+VideoSchema.index({ slug: 1 });
 VideoSchema.set('toJSON', SchemaToJson);

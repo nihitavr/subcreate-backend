@@ -15,6 +15,7 @@ export class VideoFactory {
         channelId: channelId,
         blogId: blogId,
         title: youtubeVideo.title,
+        slug: youtubeVideo.videoId,
         tags: [],
         thumbnails: youtubeVideo.thumbnails,
         originalURL: `https://www.youtube.com/watch?v=${youtubeVideo.videoId}`,

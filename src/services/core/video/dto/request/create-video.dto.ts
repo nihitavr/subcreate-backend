@@ -23,6 +23,10 @@ export class CreateVideoDto {
   @IsOptional()
   description: string;
 
+  @IsString()
+  @IsOptional()
+  slug: string;
+
   @IsNumber()
   @Min(0)
   @IsOptional()
