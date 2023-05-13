@@ -1,10 +1,18 @@
 import { Module } from '@nestjs/common';
-import { ChannelModule } from './channels/channel.module';
-import { PageModule } from './pages/pages.module';
-import { SubscriptionsModule } from './subscriptions/subscriptions.module';
-import { VideosModule } from './videos/videos.module';
+import { GuardsModule } from '../auth/guards/guards.module';
+import { ChannelModule } from './channel/channel.module';
+import { PageModule } from './page/page.module';
+import { VideoModule } from './video/video.module';
+import { BlogModule } from './blog/blog.module';
 
 @Module({
-  imports: [ChannelModule, PageModule, SubscriptionsModule, VideosModule],
+  imports: [
+    ChannelModule,
+    PageModule,
+    VideoModule,
+    BlogModule,
+    GuardsModule,
+    // SubscriptionModule,
+  ],
 })
 export class CoreModule {}

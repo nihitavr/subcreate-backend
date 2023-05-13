@@ -7,5 +7,9 @@ export const SchemaToJson = {
 };
 
 export const toJSON = <T>(item) => {
+  if (item instanceof Array) {
+    return item.map((item) => item.toJSON());
+  }
+
   return item?.toJSON();
 };

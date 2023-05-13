@@ -1,20 +1,19 @@
 import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
-import { FastifyRequest, FastifyReply } from 'fastify';
-import { request } from 'http';
 
 import { stringUtils } from '../utils';
+import { Request, Response, response } from 'express';
 
 @Injectable()
 export class HttpLoggerMiddleware implements NestMiddleware {
   private logger = new Logger('HTTP');
 
-  use(req: FastifyRequest, res: FastifyReply, next: () => void): void {
-    const { ip, method, url } = req;
+  use(req: Request, res: Response, next: () => void): void {
+    const { ip, method, originalUrl: url } = req;
     const userAgent = req.headers['user-agent'] || '';
 
-    res['raw'].on('close', () => {
-      const { statusCode } = res;
-      const contentLength = req.headers['content-length'];
+    response.on('close', () => {
+      const { statusCode } = response;
+      const contentLength = response.get('content-length');
 
       // Only log for 1 % if url has `health`
       if (
@@ -26,7 +25,7 @@ export class HttpLoggerMiddleware implements NestMiddleware {
       }
 
       this.logger.log(
-        `${method} ${url} ${statusCode} ${contentLength} - ${userAgent} - ${ip}`,
+        `${method} ${url} ${statusCode} ${contentLength} - ${userAgent} ${ip}`,
       );
     });
 
