@@ -25,6 +25,10 @@ export class CreateVideoDto {
 
   @IsString()
   @IsOptional()
+  descriptionSync: string;
+
+  @IsString()
+  @IsOptional()
   slug: string;
 
   @IsNumber()

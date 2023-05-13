@@ -7,7 +7,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { PaginationDto } from 'src/lib/entities/pagination.dto';
+import { PaginationDto } from 'src/services/common/dto/pagination.dto';
 
 export class FindVideosFilter {
   @IsBoolean()
@@ -17,6 +17,10 @@ export class FindVideosFilter {
   @IsString()
   @IsOptional()
   id: string;
+
+  @IsString()
+  @IsOptional()
+  slug: string;
 
   @IsString()
   channelId: string;

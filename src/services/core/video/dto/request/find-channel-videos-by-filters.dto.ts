@@ -7,7 +7,7 @@ import {
   IsOptional,
   ValidateNested,
 } from 'class-validator';
-import { PaginationDto } from 'src/lib/entities/pagination.dto';
+import { PaginationDto } from 'src/services/common/dto/pagination.dto';
 
 export class FindChannelVideosFilter {
   @IsBoolean()

@@ -5,9 +5,7 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   Query,
-  Request,
 } from '@nestjs/common';
 import { VideoService } from './video.service';
 import { FindVideosByFiltersDto } from './dto/request/find-videos-by-filters.dto';
@@ -16,9 +14,18 @@ import { FindVideosByFiltersDto } from './dto/request/find-videos-by-filters.dto
 export class VideoController {
   constructor(private readonly videosService: VideoService) {}
 
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  getVideos(
+    @Query('slug') slug: string,
+    @Query('channelId') channelId: string,
+  ) {
+    return this.videosService.findVideo(channelId, slug);
+  }
+
   @Post('fetch')
   @HttpCode(HttpStatus.OK)
-  findChannelVideosByFilters(
+  fetchChannelVideos(
     @Body() findChannelVideosByFiltersDto: FindVideosByFiltersDto,
   ) {
     return this.videosService.findVideosByFilters(

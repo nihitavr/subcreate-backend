@@ -15,6 +15,7 @@ export class VideoFactory {
         channelId: channelId,
         blogId: blogId,
         title: youtubeVideo.title,
+        descriptionSync: '',
         slug: youtubeVideo.videoId,
         tags: [],
         thumbnails: youtubeVideo.thumbnails,

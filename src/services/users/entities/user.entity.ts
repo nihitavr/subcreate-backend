@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { BaseEntity } from 'src/lib/entities/base-entity';
+import { BaseEntity } from 'src/services/common/entities/base-entity';
 import { SchemaToJson } from 'src/lib/utils/mongo.utils';
 
 export type UserDoc = HydratedDocument<User>;

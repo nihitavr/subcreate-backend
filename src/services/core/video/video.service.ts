@@ -19,6 +19,7 @@ import { FindChannelVideosByFiltersDto } from './dto/request/find-channel-videos
 import { VideoPage, VideoPageDoc } from './entities/video-page.entity';
 import { BlogService } from '../blog/blog.service';
 import { DoesSlugExistResponse } from '../channel/dto/does-slug-exist.response';
+import { config } from 'rxjs';
 
 @Injectable()
 export class VideoService {
@@ -36,6 +37,14 @@ export class VideoService {
     createVideoDto.channelId = channelId;
     const createdVideo = new this.videoModel<Video>(createVideoDto as Video);
     return await createdVideo.save();
+  }
+
+  async findVideo(channelId?: string, slug?: string) {
+    const video = (
+      await this.videoModel.findOne({ channelId: channelId, slug: slug })
+    ).toJSON() as VideoResponse;
+
+    return await this.createVideoResponse(video, { withBlog: true });
   }
 
   async findVideosByFilters(
@@ -63,6 +72,7 @@ export class VideoService {
       findVideosDto.sort,
       findVideosDto.pagination.page,
       findVideosDto.pagination.limit,
+      false,
     );
   }
 
@@ -89,7 +99,7 @@ export class VideoService {
       })
     ).toJSON() as VideoResponse;
 
-    const videoResDto = await this.createVideoResponse(
+    const videoResDto = await this.createDashboardVideoResponse(
       video.channelId as string,
       video,
     );
@@ -236,13 +246,16 @@ export class VideoService {
     );
   }
 
-  private async createVideoResponse(channelId: string, video: VideoResponse) {
-    const videos = await this.createVideoResponses(channelId, [video]);
+  private async createDashboardVideoResponse(
+    channelId: string,
+    video: VideoResponse,
+  ) {
+    const videos = await this.createDashboardVideoResponses(channelId, [video]);
     return videos[0];
   }
 
   // Add subscriptions and pages to the video response
-  private async createVideoResponses(
+  private async createDashboardVideoResponses(
     channelId: string,
     videos: VideoResponse[],
   ): Promise<VideoResponse[]> {
@@ -314,11 +327,49 @@ export class VideoService {
     return videos;
   }
 
+  private async createVideoResponse(
+    video: VideoResponse,
+    config: { withBlog: boolean },
+  ) {
+    const videos = await this.createVideoResponseList([video], config);
+    return videos[0];
+  }
+
+  // Add subscriptions and pages to the video response
+  private async createVideoResponseList(
+    videos: VideoResponse[],
+    config: { withBlog: boolean },
+  ): Promise<VideoResponse[]> {
+    // Extract videoIds from videos
+    const blogIds = videos.map((video) => video.blogId);
+
+    const blogs = await this.blogService.findAllByIds(blogIds);
+
+    const blogIdToBlogMap = blogs.reduce((prev, blog) => {
+      prev[blog.id] = blog;
+      return prev;
+    }, {});
+
+    // Add description from blog's first block to videos
+    videos.forEach((video) => {
+      // Replace blog's first paragraph with video description
+      if (config.withBlog) {
+        video.blog = blogIdToBlogMap[video.blogId];
+      }
+
+      video.description =
+        blogIdToBlogMap[video.blogId]?.editorData?.blocks[0]?.data?.text || '';
+    });
+
+    return videos;
+  }
+
   private async _findVideosByFilters(
     filters: { channelId: string } & any,
     sort: any,
     page: number,
     limit: number,
+    forDashboard = true,
   ) {
     const total = await this.videoModel.count(filters);
 
@@ -330,7 +381,9 @@ export class VideoService {
         .limit(limit)
     ).map(toJSON) as VideoResponse[];
 
-    videos = await this.createVideoResponses(filters.channelId, videos);
+    videos = forDashboard
+      ? await this.createDashboardVideoResponses(filters.channelId, videos)
+      : await this.createVideoResponseList(videos, { withBlog: false });
 
     return {
       pagination: {

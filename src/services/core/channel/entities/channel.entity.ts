@@ -6,7 +6,7 @@ import { NavbarItem } from './classes/navbar-item.dto';
 import { ChannelSEO } from './classes/channel-seo.dto';
 import mongoose, { HydratedDocument, ObjectId } from 'mongoose';
 import { User } from 'src/services/users/entities/user.entity';
-import { BaseEntity } from 'src/lib/entities/base-entity';
+import { BaseEntity } from 'src/services/common/entities/base-entity';
 
 export type ChannelDoc = HydratedDocument<Channel>;
 

@@ -4,8 +4,10 @@ export class VideoResponse {
   id: string;
   channelId: string;
   blogId: string;
+  blog?: Blog;
   title: string;
   description: string;
+  descriptionSync: string;
   durationInSecs: number;
   tags: string[];
   thumbnailURL: string;

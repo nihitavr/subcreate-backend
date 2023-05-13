@@ -5,7 +5,7 @@ import { PageSections } from '../dto/page-sections.dto';
 import { PageSeo } from '../dto/page-seo.dto';
 import { PageType } from '../enums/page-type.enum';
 import * as mongooseDelete from 'mongoose-delete';
-import { BaseEntity } from 'src/lib/entities/base-entity';
+import { BaseEntity } from 'src/services/common/entities/base-entity';
 import { PageSectionLayout } from '../dto/page-section-layout.dto';
 
 export type PageDoc = HydratedDocument<Page>;
