@@ -23,5 +23,6 @@ import { Blog, BlogSchema } from '../blog/entities/blog.entity';
   ],
   controllers: [ChannelDashboardController, ChannelController],
   providers: [ChannelService],
+  exports: [ChannelService],
 })
 export class ChannelModule {}

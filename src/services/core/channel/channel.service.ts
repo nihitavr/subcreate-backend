@@ -22,6 +22,7 @@ import { Video, VideoDoc } from '../video/entities/video.entity';
 import { toJSON } from 'src/lib/utils/mongo.utils';
 import { BlogFactory } from '../blog/blog.factory';
 import { Blog, BlogDoc } from '../blog/entities/blog.entity';
+import { channel } from 'diagnostics_channel';
 
 @Injectable()
 export class ChannelService {
@@ -124,6 +125,17 @@ export class ChannelService {
     return (await this.channelModel.findOne({ slug: slug })).toJSON();
   }
 
+  async getIdForSlug(slug: string) {
+    return (
+      await this.channelModel.findOne(
+        {
+          slug,
+        },
+        { _id: 1 },
+      )
+    )?.id;
+  }
+
   async findChannelGeneralSettingsByChannelId(channelId: string) {
     return (
       await this.channelModel
@@ -223,12 +235,10 @@ export class ChannelService {
   }
 
   async doesSlugExist(slug: string): Promise<DoesSlugExistResponse> {
-    const channel = await this.channelModel
-      .findOne({ slug: slug })
-      .select({ _id: 1 });
+    const channel = await this.channelModel.exists({ slug: slug });
 
     if (channel) {
-      return { doesSlugExist: true };
+      return { doesSlugExist: true, id: channel?._id?.toString() };
     }
 
     return { doesSlugExist: false };

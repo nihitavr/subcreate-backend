@@ -5,9 +5,17 @@ import { UsersModule } from './services/users/users.module';
 import { HttpLoggerMiddleware } from './lib/middleware/app-logger.middleware';
 import { CoreModule } from './services/core/core.module';
 import { BlogModule } from './services/core/blog/blog.module';
+import { RecommendationModule } from './services/recommendation/recommendation.module';
 
 @Module({
-  imports: [DatabaseModule, HealthModule, CoreModule, UsersModule, BlogModule],
+  imports: [
+    DatabaseModule,
+    HealthModule,
+    CoreModule,
+    UsersModule,
+    BlogModule,
+    RecommendationModule,
+  ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer): void {

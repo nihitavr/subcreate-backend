@@ -2,10 +2,11 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument, ObjectId } from 'mongoose';
 import { BaseEntity } from 'src/services/common/entities/base-entity';
 import { SchemaToJson } from 'src/lib/utils/mongo.utils';
+import { Block } from './block.entity';
 
 export class BlogData {
   @Prop({ required: true })
-  blocks: any[];
+  blocks: Block[];
 
   @Prop()
   time?: string;

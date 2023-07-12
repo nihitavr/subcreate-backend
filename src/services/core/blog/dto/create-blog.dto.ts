@@ -1,12 +1,15 @@
-import { Allow, IsArray, IsNumber, IsString } from 'class-validator';
+import { OutputBlockData } from '@editorjs/editorjs';
+import { Allow, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateBlogDto {
   @Allow()
-  blocks: any;
+  blocks: OutputBlockData[];
 
   @IsNumber()
+  @IsOptional()
   time?: number;
 
   @IsString()
+  @IsOptional()
   version?: string;
 }

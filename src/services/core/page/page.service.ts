@@ -60,6 +60,17 @@ export class PageService {
     return page;
   }
 
+  async getIdForSlug(slug: string) {
+    return (
+      await this.pageModel.findOne(
+        {
+          slug,
+        },
+        { _id: 1 },
+      )
+    )?.id;
+  }
+
   update(pageId: string, updatePageDto: UpdatePageDto) {
     return this.pageModel.findOneAndUpdate({ _id: pageId }, updatePageDto, {
       new: true,
@@ -81,7 +92,7 @@ export class PageService {
     const page = await this.pageModel.exists({ channelId, slug });
 
     if (page) {
-      return { doesSlugExist: true, id: page._id?.toString() };
+      return { doesSlugExist: true, id: page?._id?.toString() };
     }
 
     return { doesSlugExist: false };

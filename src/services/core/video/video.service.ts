@@ -336,9 +336,9 @@ export class VideoService {
   }
 
   // Add subscriptions and pages to the video response
-  private async createVideoResponseList(
+  async createVideoResponseList(
     videos: VideoResponse[],
-    config: { withBlog: boolean },
+    config?: { withBlog: boolean },
   ): Promise<VideoResponse[]> {
     // Extract videoIds from videos
     const blogIds = videos.map((video) => video.blogId);
@@ -353,7 +353,7 @@ export class VideoService {
     // Add description from blog's first block to videos
     videos.forEach((video) => {
       // Replace blog's first paragraph with video description
-      if (config.withBlog) {
+      if (config?.withBlog) {
         video.blog = blogIdToBlogMap[video.blogId];
       }
 

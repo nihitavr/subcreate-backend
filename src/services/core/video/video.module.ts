@@ -23,5 +23,6 @@ import { BlogModule } from '../blog/blog.module';
   ],
   controllers: [VideoDashboardController, VideoController],
   providers: [VideoService],
+  exports: [VideoService],
 })
 export class VideoModule {}

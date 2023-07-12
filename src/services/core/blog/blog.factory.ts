@@ -18,7 +18,7 @@ export class BlogFactory {
               data: {
                 text: youtubeVideo.description,
               },
-            },
+            } as any,
           ],
         },
       };
